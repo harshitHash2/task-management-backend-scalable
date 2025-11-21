@@ -32,14 +32,15 @@ Backend assignment implementation using **Node.js**, **Express**, **MongoDB**, *
 - Process Manager (pm2)
   - Can start with the process manager in clustering mode 
 
-## 1. Setup & Run
+## 1. Setup
 
 ####  Clone the repository
 ```bash
 git clone https://github.com/harshitHash2/task-management-backend-scalable.git
 cd task-management-backend-scalable
+```
 
-1. Install dependencies
+#### Install dependencies
 
 ```bash
 npm install
@@ -74,12 +75,12 @@ SENDGRID_API_KEY=your_send_grid_API_Key
 
 # For process manager ( if running with npm run dev then keep it false otherwise true)
 ENABLE_PM=false
+```
 
 
 
 
-
-3. Run the server
+## 3. Run the server
 
 
 Without Process manager (`ENABLE_PM` env variable must be `false` in this case)
