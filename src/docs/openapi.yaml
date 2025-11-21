@@ -1,0 +1,258 @@
+openapi: 3.0.0
+info:
+  title: Task-Management-Backend
+  version: 1.0.0
+  description: 
+servers:
+  - url: http://localhost:4000/api
+paths:
+  /auth/register:
+    post:
+      summary: Sign Up
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: User registered
+        '400':
+          description: Validation error
+  /auth/login:
+    post:
+      summary: Login
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier:
+                  type: string
+                  description: Email or username
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+  /auth/logout:
+    post:
+      summary: User logout
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logged out
+  /users/me:
+    get:
+      summary: Get current user profile
+      tags: [Users]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile info
+  /teams:
+    post:
+      summary: Create a team (admin only)
+      tags: [Teams]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, managerId]
+              properties:
+                name:
+                  type: string
+                managerId:
+                  type: string
+      responses:
+        '201':
+          description: Team created
+  /teams/{teamId}/add-member:
+    post:
+      summary: Add member to team (admin/manager)
+      tags: [Teams]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Member added
+  /teams/me:
+    get:
+      summary: Get team of current manager
+      tags: [Teams]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Team info
+  /tasks:
+    get:
+      summary: Get tasks
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: priority
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of tasks
+    post:
+      summary: Create task
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title]
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                dueDate:
+                  type: string
+                  format: date-time
+                priority:
+                  type: string
+                  enum: [low, medium, high]
+      responses:
+        '201':
+          description: Task created
+  /tasks/{id}:
+    patch:
+      summary: Update task
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Task updated
+    delete:
+      summary: Delete task
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted
+  /tasks/{id}/assign:
+    post:
+      summary: Assign task to a user
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [userId]
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Task assigned
+  /tasks/assigned/me:
+    get:
+      summary: Get tasks assigned to current user
+      tags: [Tasks]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of tasks
+  /tasks/analytics/summary:
+    get:
+      summary: Get task analytics for current user scope
+      tags: [Analytics]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task analytics
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
