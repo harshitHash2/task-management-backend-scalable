@@ -93,6 +93,7 @@ With Process manager (`ENABLE_PM` env variable must be `true` in this case)
 pm2 start ecosystem.config.cjs
 ```
 
+## 4. Delete process manager servers
 
 Server: `http://localhost:4000`  
 Swagger: `http://localhost:4000/api/docs`
